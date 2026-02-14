@@ -4,3 +4,4 @@ node_modules/
 .cursor/*
 
 *.png
+!favicon-round.png
