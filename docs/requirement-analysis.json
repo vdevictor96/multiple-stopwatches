@@ -1,0 +1,118 @@
+{
+  "taskType": "feature",
+  "purpose": "Add localStorage persistence to maintain stopwatch state (times, names, keybinds, order) across browser sessions, enabling users to close and reopen the browser without losing their stopwatch data.",
+  "scale": "small",
+  "confidence": "confirmed",
+  "affectedFiles": [
+    "multiple-stopwatches_script.js"
+  ],
+  "fileCount": 1,
+  "factorScores": {
+    "fileCount": 0.0,
+    "complexity": 0.4,
+    "layers": 0.33,
+    "dependencies": 0.25,
+    "weightedAverage": 0.23
+  },
+  "calculationRationale": "Weighted average calculation: (fileCount: 0.0 × 0.30) + (complexity: 0.4 × 0.25) + (layers: 0.33 × 0.25) + (dependencies: 0.25 × 0.20) = 0.23. Single file modification with moderate complexity (serialization/deserialization logic, state restoration), adding persistence layer (client-side JS + localStorage), and native browser API dependency.",
+  "fallbackUsed": false,
+  "fallbackScale": null,
+  "userOverride": false,
+  "adrRequired": true,
+  "adrReason": "Data flow change: Storage location changes (Memory -> localStorage). This represents a fundamental change in how state is managed, moving from ephemeral in-memory state to persistent browser storage.",
+  "technicalConsiderations": {
+    "constraints": [
+      "Cannot serialize DOM references (stopwatch, timeButton) - must recreate DOM elements on restore",
+      "Cannot serialize setInterval handles - must restore running state and restart timers",
+      "Cannot serialize object references in keybindObj - must store stopwatch IDs instead of object references",
+      "Must maintain DOM order to preserve visual order (drag-and-drop position)",
+      "localStorage has ~5-10MB limit (unlikely to be exceeded for this use case)",
+      "Must handle localStorage unavailability (private browsing, disabled storage)",
+      "Need to handle data migration if schema changes in future"
+    ],
+    "risks": [
+      "State desynchronization if localStorage write fails silently",
+      "Running timers cannot be persisted - must calculate elapsed time on restore",
+      "If browser closed while timer running, must restore running state accurately",
+      "keybindObj references stopwatch objects - need ID-based serialization strategy",
+      "Race conditions if multiple tabs modify localStorage simultaneously",
+      "Corrupted localStorage data could break app initialization",
+      "Need to handle edge case: restore when DOM not ready"
+    ],
+    "dependencies": [
+      "localStorage API (native browser API, no external dependency)",
+      "JSON.stringify/parse for serialization (native JavaScript)"
+    ]
+  },
+  "scopeDependencies": [
+    {
+      "question": "Should running timers continue counting elapsed time when restored (i.e., if a stopwatch was running when browser closed, should it resume from calculated elapsed time or start from saved prevTime)?",
+      "impact": {
+        "if_yes": "small",
+        "if_no": "small"
+      }
+    },
+    {
+      "question": "Should localStorage persistence be optional (user preference) or always-on?",
+      "impact": {
+        "if_yes": "small",
+        "if_no": "small"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "category": "boundary",
+      "question": "Should macro keybinds be persisted? (Current implementation stores them in keybindObj)",
+      "options": ["Yes - persist all keybinds including macros", "No - only persist individual keybinds", "User preference"]
+    },
+    {
+      "category": "existing_code",
+      "question": "Should the initial stopwatch (created on page load) be persisted, or should we always start with at least one stopwatch?",
+      "options": ["Persist all stopwatches including initial one", "Always create one default stopwatch on first load", "Remove initial stopwatch if none persisted"]
+    },
+    {
+      "category": "dependencies",
+      "question": "How should we handle localStorage errors (quota exceeded, disabled storage)?",
+      "options": ["Silently fail and continue without persistence", "Show user warning/error message", "Graceful degradation with in-memory fallback"]
+    }
+  ],
+  "stateToPersist": {
+    "stopwatchArray": {
+      "serializable": ["id", "name", "keybind", "prevTime", "startTime (if running)", "isRunning (derived)"],
+      "exclude": ["stopwatch (DOM ref)", "timeButton (DOM ref)", "dropCount (temporary drag state)"]
+    },
+    "keybindObj": {
+      "serializable": "Map keys to arrays of stopwatch IDs (not object references)",
+      "note": "Currently stores object references - need ID-based serialization"
+    },
+    "numIds": {
+      "serializable": true,
+      "purpose": "Maintain ID counter to avoid conflicts"
+    },
+    "order": {
+      "serializable": "Array of stopwatch IDs in DOM order",
+      "note": "Visual order determined by DOM position, must be preserved"
+    }
+  },
+  "saveTriggerPoints": [
+    "addStopwatch() - line 75",
+    "removeStopwatch() - line 176",
+    "clear() - line 170",
+    "clickTimeButtonEvent() - line 233 (start/stop)",
+    "keybindChangeEvent() - line 265",
+    "nameChangeEvent() - line 297",
+    "addMacroKeybind() - line 309",
+    "removeKeybind() - line 286",
+    "Drag-and-drop drop event - line 148 (reordering)"
+  ],
+  "restoreRequirements": [
+    "Read from localStorage on page load (before initial stopwatch creation)",
+    "Recreate DOM elements for each persisted stopwatch",
+    "Restore event listeners on recreated elements",
+    "Restore keybindObj with ID-based references",
+    "Restore running state and restart timers if stopwatch was running",
+    "Maintain DOM order based on persisted order array",
+    "Update numIds to highest ID + 1 to avoid conflicts"
+  ]
+}

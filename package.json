@@ -1,0 +1,17 @@
+{
+  "name": "multiple-stopwatches",
+  "version": "1.0.0",
+  "description": "A tool to create, name, and bind keys to multiple stopwatches with macro support.",
+  "private": true,
+  "scripts": {
+    "start": "serve .",
+    "dev": "browser-sync start --server --files '*.html, *.css, *.js' --no-notify"
+  },
+  "devDependencies": {
+    "browser-sync": "^3",
+    "jsdom": "^28.0.0",
+    "playwright": "^1.58.2",
+    "puppeteer": "^24.37.3",
+    "serve": "^14"
+  }
+}

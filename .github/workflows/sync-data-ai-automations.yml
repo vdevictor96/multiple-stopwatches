@@ -1,0 +1,67 @@
+name: Sync Data AI Automations
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"  # Every Monday at 9:00 UTC
+  repository_dispatch:
+    types: [data-ai-automations-updated]
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clean generated files
+        run: |
+          rm -rf .cursor/
+
+      - name: Generate AI Automations
+        run: |
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e GITHUB_REPOSITORY \
+            -e OUTPUT_DIR=.cursor \
+            -v "${{ github.workspace }}:/workspace" \
+            ghcr.io/feverup/data-ai-automations:latest
+
+      - name: Stage generated files (force add gitignored)
+        run: |
+          git checkout -- .github/ || true
+          git add --force .cursor/
+
+      - name: Create or update PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: sync/data-ai-automations
+          base: ${{ github.ref_name }}
+          title: "chore: sync data-ai-automations"
+          commit-message: "chore: sync data-ai-automations outputs"
+          body: |
+            ## Summary
+            - Auto-generated synchronization of AI skills and agents from data-ai-automations
+
+            ## Changes
+            - `.cursor/skills/` - Updated skill definitions
+            - `.cursor/agents/` - Updated agent configurations
+
+            ## Test plan
+            - [ ] N/A (documentation/metadata updates)
+          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
