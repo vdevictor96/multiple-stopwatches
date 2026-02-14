@@ -19,6 +19,7 @@ let numStopwatches = 0;
 let numIds = 1;
 let dragged;
 const STORAGE_KEY = 'multiple-stopwatches-state';
+const FOOTER_STYLE_KEY = 'multiple-stopwatches-footer-style';
 let saveThrottleTimer = null;
 let saveBatchDepth = 0;
 
@@ -93,6 +94,7 @@ if (savedState && savedState.stopwatches.length > 0) {
 }
 
 setInterval(updateStopwatches, 10);
+setupFooterStyleToggle();
 
 function addStopwatch() {
 	let newStopwatch = template.cloneNode(true);
@@ -324,6 +326,61 @@ function keyDownEvent(e) {
 			swArray.forEach(sw => sw.timeButton.click());
 		}
 	}
+}
+
+function setupFooterStyleToggle() {
+	let footer = document.getElementById('love-footer');
+	if (!footer) return;
+
+	let styles = ['footer-style-classic', 'footer-style-romantic'];
+	let activeStyle = localStorage.getItem(FOOTER_STYLE_KEY);
+	if (!styles.includes(activeStyle)) {
+		activeStyle = styles[0];
+	}
+
+	footer.classList.remove(styles[0], styles[1]);
+	footer.classList.add(activeStyle);
+	updateFooterTitle(footer, activeStyle);
+
+	footer.addEventListener('click', () => {
+		spawnFooterHeart(footer, activeStyle);
+		let currentIdx = styles.indexOf(activeStyle);
+		activeStyle = styles[(currentIdx + 1) % styles.length];
+		footer.classList.remove(styles[0], styles[1]);
+		footer.classList.add(activeStyle);
+		updateFooterTitle(footer, activeStyle);
+		localStorage.setItem(FOOTER_STYLE_KEY, activeStyle);
+	});
+}
+
+function updateFooterTitle(footer, activeStyle) {
+	let nextStyleName = activeStyle === 'footer-style-classic' ? 'romantic' : 'classic';
+	let activeStyleName = activeStyle === 'footer-style-classic' ? 'Classic' : 'Romantic';
+	footer.title = activeStyleName + ' style active. Click to switch to ' + nextStyleName + ' and launch a heart.';
+}
+
+function spawnFooterHeart(footer, activeStyle) {
+	let rect = footer.getBoundingClientRect();
+	let heart = document.createElement('div');
+	let driftX = (Math.random() * 90) - 75;
+	let rise = Math.max(Math.floor(window.innerHeight * 0.65), 320);
+	let rotate = (Math.random() * 28) - 14;
+	heart.className = 'floating-heart';
+	heart.textContent = '\u2665';
+	heart.style.left = Math.round(rect.left + (rect.width / 2)) + 'px';
+	heart.style.top = Math.round(rect.top + 4) + 'px';
+	heart.style.setProperty('--heart-dx', driftX + 'px');
+	heart.style.setProperty('--heart-rise', rise + 'px');
+	heart.style.setProperty('--heart-rot', rotate + 'deg');
+	if (activeStyle === 'footer-style-classic') {
+		heart.style.color = '#be3b67';
+	} else {
+		heart.style.color = '#db4f80';
+	}
+	heart.addEventListener('animationend', () => {
+		heart.remove();
+	});
+	document.body.appendChild(heart);
 }
 
 function saveOldKeybind(e) {

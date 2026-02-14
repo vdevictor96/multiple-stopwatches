@@ -190,3 +190,68 @@ button:active {
 	width: 25px;
 	border: 1px solid #d0d0d0;
 }
+
+#love-footer {
+	position: fixed;
+	right: 14px;
+	bottom: 10px;
+	padding: 6px 10px;
+	border-radius: 999px;
+	font-size: 0.82rem;
+	font-style: italic;
+	letter-spacing: 0.02em;
+	line-height: 1;
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+	user-select: none;
+	cursor: pointer;
+	transition: all 180ms ease;
+}
+
+#love-footer:hover {
+	transform: translateY(-1px);
+}
+
+#love-footer.footer-style-classic {
+	background: rgba(255, 255, 255, 0.82);
+	border: 1px solid rgba(176, 176, 176, 0.65);
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+	color: #444;
+}
+
+#love-footer.footer-style-romantic {
+	background: linear-gradient(135deg, rgba(255, 236, 243, 0.95), rgba(255, 250, 236, 0.95));
+	border: 1px solid rgba(240, 165, 189, 0.75);
+	box-shadow: 0 4px 14px rgba(214, 121, 151, 0.28);
+	color: #8c3556;
+	text-shadow: 0 0 8px rgba(255, 255, 255, 0.65);
+}
+
+.floating-heart {
+	position: fixed;
+	left: 0;
+	top: 0;
+	transform: translate(-50%, -50%);
+	font-size: 1.35rem;
+	line-height: 1;
+	color: #cf4c78;
+	text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+	pointer-events: none;
+	z-index: 9999;
+	will-change: transform, opacity;
+	animation: float-heart-up 1400ms ease-out forwards;
+}
+
+@keyframes float-heart-up {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) scale(0.7) rotate(0deg);
+	}
+	20% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		transform: translate(calc(-50% + var(--heart-dx, -28px)), calc(-50% - var(--heart-rise, 460px))) scale(1.35) rotate(var(--heart-rot, -12deg));
+	}
+}
