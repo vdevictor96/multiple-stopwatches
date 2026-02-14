@@ -1,6 +1,13 @@
 body {
 	background-color: white;
-	font-family: system-ui;
+	font-family: "Montserrat", "Avenir Next", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+	font: inherit;
 }
 
 #toolbar {
@@ -12,7 +19,9 @@ body {
 #toolbar button {
 	height: 30px;
 	width: 150px;
-	font-size: 1em;
+	font-size: 0.95em;
+	line-height: 1;
+	padding: 0 8px;
 	margin: 10px;
 }
 
@@ -36,7 +45,8 @@ body {
 }
 
 h1 {
-	font-size: 1.5em;
+	font-size: 1.4em;
+	line-height: 1.2;
 }
 
 #sidebar input[type="checkbox"] {
@@ -74,7 +84,7 @@ h1 {
 	width: 200px;
 	height: 200px;
 	margin-left: 10px;
-	font-family: system-ui;
+	font-family: inherit;
 }
 
 .divider {
@@ -152,7 +162,7 @@ h1 {
 	border: 3px solid black;
 	color: black;
 	font-size: 2.5em;
-	font-family: "Courier New";
+	font-variant-numeric: tabular-nums;
 }
 
 .time button.going {
@@ -175,19 +185,28 @@ button:active {
 }
 
 .keybind {
-	width: 100px;
-	display: block;
+	width: 102px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
 	float: right;
 	margin: 0 10px;
+	white-space: nowrap;
 }
 
 .keybind span {
-	float: left;
+	float: none;
+	line-height: 1.2;
 }
 
 .keybind input {
-	float: right;
+	float: none;
 	width: 25px;
+	height: 22px;
+	padding: 0;
+	box-sizing: border-box;
+	text-align: center;
 	border: 1px solid #d0d0d0;
 }
 
