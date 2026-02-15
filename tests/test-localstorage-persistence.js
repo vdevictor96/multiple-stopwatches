@@ -205,11 +205,13 @@ const puppeteer = require('puppeteer');
     // ============================================================
     console.log('\n=== TEST 2: Clear and Remove persist ===\n');
     
-    // Step 13: Click "Clear All" button
+    // Step 13: Click "Clear All" button and confirm
     console.log('13. Clicking "Clear All" button...');
     await page.click('#clear-all');
+    await wait(200);
+    await page.click('#confirm-modal-confirm');
     await wait(500);
-    console.log('✓ Clicked "Clear All"\n');
+    console.log('✓ Clicked "Clear All" and confirmed\n');
     
     // Step 14: Verify first stopwatch time is reset to 0.00
     console.log('14. Verifying stopwatch times are reset...');
@@ -252,11 +254,13 @@ const puppeteer = require('puppeteer');
     // ============================================================
     console.log('\n=== TEST 3: Remove All clears localStorage ===\n');
     
-    // Step 17: Click "Remove All" button
+    // Step 17: Click "Remove All" button and confirm
     console.log('17. Clicking "Remove All" button...');
     await page.click('#remove-all');
+    await wait(200);
+    await page.click('#confirm-modal-confirm');
     await wait(500);
-    console.log('✓ Clicked "Remove All"\n');
+    console.log('✓ Clicked "Remove All" and confirmed\n');
     
     // Step 18: Verify all stopwatches are removed
     console.log('18. Verifying all stopwatches are removed...');
@@ -295,6 +299,71 @@ const puppeteer = require('puppeteer');
     }
     
     await takeScreenshot('08-after-refresh-remove-all', 'After refresh following Remove All');
+    
+    // ============================================================
+    // TEST 4: Cancel keeps current state
+    // ============================================================
+    console.log('\n=== TEST 4: Cancel keeps current state ===\n');
+    
+    // Step 21: Add a stopwatch and run it
+    console.log('21. Adding stopwatch and running it...');
+    await page.click('#add-stopwatch');
+    await wait(500);
+    await page.evaluate(() => {
+      const stopwatches = Array.from(document.querySelectorAll('.stopwatch-divider'));
+      const real = stopwatches.find(sw => sw.id !== 'template' && sw.id !== '0');
+      if (real) real.querySelector('.time button').click();
+    });
+    await wait(2500);
+    await page.evaluate(() => {
+      const stopwatches = Array.from(document.querySelectorAll('.stopwatch-divider'));
+      const real = stopwatches.find(sw => sw.id !== 'template' && sw.id !== '0');
+      if (real) real.querySelector('.time button').click();
+    });
+    await wait(300);
+    const timeBeforeCancelClear = await page.evaluate(() => {
+      const stopwatches = Array.from(document.querySelectorAll('.stopwatch-divider'));
+      const real = stopwatches.find(sw => sw.id !== 'template' && sw.id !== '0');
+      return real ? real.querySelector('.time button').textContent : '0.00';
+    });
+    console.log(`   Time before cancel: ${timeBeforeCancelClear}\n`);
+    
+    // Step 22: Click Clear All then Cancel
+    console.log('22. Clicking "Clear All" then "Cancel"...');
+    await page.click('#clear-all');
+    await wait(200);
+    await page.click('#confirm-modal-cancel');
+    await wait(300);
+    const timeAfterCancelClear = await page.evaluate(() => {
+      const stopwatches = Array.from(document.querySelectorAll('.stopwatch-divider'));
+      const real = stopwatches.find(sw => sw.id !== 'template' && sw.id !== '0');
+      return real ? real.querySelector('.time button').textContent : '0.00';
+    });
+    
+    if (timeAfterCancelClear === timeBeforeCancelClear && parseFloat(timeAfterCancelClear) >= 2) {
+      console.log('✓ TEST PASSED: Clear All + Cancel kept time unchanged\n');
+      testsPassed++;
+    } else {
+      console.log(`✗ TEST FAILED: Expected time ${timeBeforeCancelClear}, got ${timeAfterCancelClear}\n`);
+      testsFailed++;
+    }
+    
+    // Step 23: Click Remove All then Cancel
+    console.log('23. Clicking "Remove All" then "Cancel"...');
+    stopwatchCount = await getStopwatchCount();
+    await page.click('#remove-all');
+    await wait(200);
+    await page.click('#confirm-modal-cancel');
+    await wait(300);
+    const countAfterCancelRemove = await getStopwatchCount();
+    
+    if (countAfterCancelRemove === stopwatchCount && countAfterCancelRemove >= 1) {
+      console.log('✓ TEST PASSED: Remove All + Cancel kept stopwatches unchanged\n');
+      testsPassed++;
+    } else {
+      console.log(`✗ TEST FAILED: Expected ${stopwatchCount} stopwatches, got ${countAfterCancelRemove}\n`);
+      testsFailed++;
+    }
     
   } catch (error) {
     console.error('\n✗ TEST ERROR:', error.message);

@@ -10,9 +10,9 @@ const puppeteer = require('puppeteer');
   console.log('=== STOPWATCH TEST RESULTS ===\n');
   
   // Step 1: Navigate to the page
-  console.log('1. Navigating to http://localhost:3847/index.html...');
+  console.log('1. Navigating to http://localhost:3000/index.html...');
   try {
-    await page.goto('http://localhost:3847/index.html', { waitUntil: 'networkidle2' });
+    await page.goto('http://localhost:3000/index.html', { waitUntil: 'networkidle2' });
     console.log('✓ Page loaded successfully\n');
   } catch (error) {
     console.log('✗ Failed to load page:', error.message);

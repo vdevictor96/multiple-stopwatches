@@ -25,26 +25,73 @@ let lastSummaryUpdate = 0;
 let footerClickTimestamps = [];
 let lastFooterBurstAt = 0;
 
-addStopwatchBtn.addEventListener('click', addStopwatch);
-removeAll.addEventListener('click', () => {
-	batchSaves(() => {
-		let i = 0;
-		while (i < stopwatchArray.length) {
-			if (stopwatchArray[i].stopwatch) {
-				removeStopwatch(stopwatchArray[i].stopwatch);
-			} else {
-				i++;
+function confirmModal(options) {
+	const overlay = document.getElementById('confirm-modal-overlay');
+	const titleEl = overlay.querySelector('.confirm-modal-title');
+	const messageEl = overlay.querySelector('.confirm-modal-message');
+	const cancelBtn = document.getElementById('confirm-modal-cancel');
+	const confirmBtn = document.getElementById('confirm-modal-confirm');
+	return new Promise(resolve => {
+		titleEl.textContent = options.title || 'Confirm';
+		messageEl.textContent = options.message || 'Are you sure?';
+		overlay.setAttribute('aria-hidden', 'false');
+		let resolved = false;
+		function finish(result) {
+			if (resolved) return;
+			resolved = true;
+			overlay.setAttribute('aria-hidden', 'true');
+			document.removeEventListener('keydown', onKeydown);
+			cancelBtn.removeEventListener('click', onCancel);
+			confirmBtn.removeEventListener('click', onConfirm);
+			resolve(result);
+		}
+		function onKeydown(e) {
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				finish(false);
 			}
 		}
-		numIds = 1; //reset IDs, since there is no chance of conflict
+		function onCancel() { finish(false); }
+		function onConfirm() { finish(true); }
+		cancelBtn.addEventListener('click', onCancel);
+		confirmBtn.addEventListener('click', onConfirm);
+		document.addEventListener('keydown', onKeydown);
+		cancelBtn.focus();
+	});
+}
+
+addStopwatchBtn.addEventListener('click', addStopwatch);
+removeAll.addEventListener('click', () => {
+	confirmModal({
+		title: 'Remove All Stopwatches',
+		message: 'Are you sure you want to remove all stopwatches? This cannot be undone.'
+	}).then(confirmed => {
+		if (!confirmed) return;
+		batchSaves(() => {
+			let i = 0;
+			while (i < stopwatchArray.length) {
+				if (stopwatchArray[i].stopwatch) {
+					removeStopwatch(stopwatchArray[i].stopwatch);
+				} else {
+					i++;
+				}
+			}
+			numIds = 1; //reset IDs, since there is no chance of conflict
+		});
 	});
 });
 clearAll.addEventListener('click', () => {
-	batchSaves(() => {
-		stopwatchArray.forEach(sw => {
-			if (sw.stopwatch) {
-				clear(sw.stopwatch);
-			}
+	confirmModal({
+		title: 'Clear All Timers',
+		message: 'Are you sure you want to clear all stopwatch times to 0.00?'
+	}).then(confirmed => {
+		if (!confirmed) return;
+		batchSaves(() => {
+			stopwatchArray.forEach(sw => {
+				if (sw.stopwatch) {
+					clear(sw.stopwatch);
+				}
+			});
 		});
 	});
 });

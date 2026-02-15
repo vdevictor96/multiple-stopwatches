@@ -4,8 +4,9 @@
   "description": "A tool to create, name, and bind keys to multiple stopwatches with macro support.",
   "private": true,
   "scripts": {
-    "start": "serve .",
-    "dev": "browser-sync start --server --files '*.html, *.css, *.js' --no-notify"
+    "start": "serve . -l 3000",
+    "dev": "browser-sync start --server --files '*.html, *.css, *.js' --no-notify",
+    "test": "node tests/test-stopwatch.js && node tests/test-stopwatch-puppeteer.js && node tests/test-localstorage-persistence.js"
   },
   "devDependencies": {
     "browser-sync": "^3",
