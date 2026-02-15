@@ -19,7 +19,7 @@ const puppeteer = require('puppeteer');
   
   // Helper function to wait and take screenshot
   async function takeScreenshot(name, description) {
-    const filename = `test-${name}.png`;
+    const filename = `tests/test-${name}.png`;
     await page.screenshot({ path: filename });
     console.log(`   📸 Screenshot saved: ${filename} (${description})\n`);
   }
@@ -317,14 +317,14 @@ const puppeteer = require('puppeteer');
   }
   
   console.log('\nScreenshots saved:');
-  console.log('  - test-01-initial-state.png');
-  console.log('  - test-02-stopped-time.png');
-  console.log('  - test-03-before-refresh.png');
-  console.log('  - test-04-after-refresh.png');
-  console.log('  - test-05-after-clear.png');
-  console.log('  - test-06-after-refresh-clear.png');
-  console.log('  - test-07-after-remove-all.png');
-  console.log('  - test-08-after-refresh-remove-all.png');
+  console.log('  - tests/test-01-initial-state.png');
+  console.log('  - tests/test-02-stopped-time.png');
+  console.log('  - tests/test-03-before-refresh.png');
+  console.log('  - tests/test-04-after-refresh.png');
+  console.log('  - tests/test-05-after-clear.png');
+  console.log('  - tests/test-06-after-refresh-clear.png');
+  console.log('  - tests/test-07-after-remove-all.png');
+  console.log('  - tests/test-08-after-refresh-remove-all.png');
   
   await browser.close();
   

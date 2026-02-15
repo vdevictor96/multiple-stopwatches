@@ -29,15 +29,6 @@ select {
 	display: inline-block;
 }
 
-#add-macro-input {
-	visibility: hidden;
-	width: 25px;
-}
-
-.active #add-macro-input {
-	visibility: visible;
-}
-
 #sidebar {
 	float: right;
 	margin: 10px 30px;
@@ -49,14 +40,6 @@ h1 {
 	line-height: 1.2;
 }
 
-#sidebar input[type="checkbox"] {
-	margin: 3px 8px 3px 0;
-}
-
-#sidebar label {
-	vertical-align: middle;
-}
-
 #sidebar div {
 	list-style-type: disc;
 	margin: 10px 0;
@@ -66,7 +49,7 @@ h1 {
 	padding-top: 50px;
 }
 
-#template, #macro-li-template {
+#template {
 	display: none;
 }
 
@@ -184,41 +167,15 @@ button:active {
 	background-color: lightgray;
 }
 
-.keybind {
-	width: 102px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 6px;
-	float: right;
-	margin: 0 10px;
-	white-space: nowrap;
-}
-
-.keybind span {
-	float: none;
-	line-height: 1.2;
-}
-
-.keybind input {
-	float: none;
-	width: 25px;
-	height: 22px;
-	padding: 0;
-	box-sizing: border-box;
-	text-align: center;
-	border: 1px solid #d0d0d0;
-}
-
 #love-footer {
 	position: fixed;
 	right: 14px;
 	bottom: 10px;
-	padding: 6px 10px;
+	padding: 9px 14px;
 	border-radius: 999px;
-	font-size: 0.82rem;
+	font-size: 0.95rem;
 	font-style: italic;
-	letter-spacing: 0.02em;
+	letter-spacing: 0.03em;
 	line-height: 1;
 	backdrop-filter: blur(2px);
 	-webkit-backdrop-filter: blur(2px);
@@ -228,7 +185,7 @@ button:active {
 }
 
 #love-footer:hover {
-	transform: translateY(-1px);
+	transform: translateY(-2px);
 }
 
 #love-footer.footer-style-classic {
@@ -259,6 +216,63 @@ button:active {
 	z-index: 9999;
 	will-change: transform, opacity;
 	animation: float-heart-up 1400ms ease-out forwards;
+}
+
+/* Summary Panel */
+#summary-panel {
+	margin-top: 20px;
+	padding-top: 15px;
+	border-top: 1px solid #ccc;
+	list-style-type: none;
+}
+
+#summary-panel div {
+	list-style-type: none;
+	margin: 0;
+}
+
+#summary-panel h2 {
+	font-size: 1.1em;
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+
+.summary-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	padding: 3px 0;
+	font-size: 0.9em;
+	gap: 8px;
+}
+
+.summary-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 150px;
+	flex-shrink: 1;
+}
+
+.summary-time {
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	flex-shrink: 0;
+	text-align: right;
+}
+
+.summary-total-row {
+	font-weight: 700;
+	border-top: 1px solid #999;
+	margin-top: 6px;
+	padding-top: 6px;
+}
+
+.summary-human-total {
+	text-align: right;
+	font-size: 0.82em;
+	color: #777;
+	margin-top: 2px;
 }
 
 @keyframes float-heart-up {

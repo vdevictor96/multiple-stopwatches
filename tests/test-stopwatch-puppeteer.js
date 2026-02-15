@@ -31,8 +31,8 @@ const puppeteer = require('puppeteer');
   }
   
   // Take screenshot of initial state
-  await page.screenshot({ path: 'test-initial-state.png' });
-  console.log('   Screenshot saved: test-initial-state.png\n');
+  await page.screenshot({ path: 'tests/test-initial-state.png' });
+  console.log('   Screenshot saved: tests/test-initial-state.png\n');
   
   // Step 3: Click the time button to start the stopwatch
   console.log('3. Starting the stopwatch...');
@@ -63,8 +63,8 @@ const puppeteer = require('puppeteer');
   }
   
   // Take screenshot after 3 seconds
-  await page.screenshot({ path: 'test-after-3-seconds.png' });
-  console.log('   Screenshot saved: test-after-3-seconds.png\n');
+  await page.screenshot({ path: 'tests/test-after-3-seconds.png' });
+  console.log('   Screenshot saved: tests/test-after-3-seconds.png\n');
   
   // Step 6: Stop the timer
   console.log('6. Stopping the timer...');
@@ -151,8 +151,8 @@ const puppeteer = require('puppeteer');
   console.log(`formatTime tests: ${formatTimeAllPassed ? '✓' : '✗'}`);
   console.log(`parseTimeToSeconds tests: ${parseTimeAllPassed ? '✓' : '✗'}`);
   console.log('\nScreenshots saved:');
-  console.log('  - test-initial-state.png');
-  console.log('  - test-after-3-seconds.png');
+  console.log('  - tests/test-initial-state.png');
+  console.log('  - tests/test-after-3-seconds.png');
   
   await browser.close();
 })();
